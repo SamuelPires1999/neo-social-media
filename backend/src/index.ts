@@ -11,6 +11,7 @@ import session from 'express-session'
 import cors from 'cors'
 import connectRedis from 'connect-redis'
 import {FriendShip} from './entities/Friendship'
+import {PostResolver} from "./resolvers/PostResolver";
 
 const main = async () => {
     const conn = await createConnection({
@@ -28,7 +29,7 @@ const main = async () => {
     const app = express()
 
     const RedisStore = connectRedis(session)
-    const redis = new Redis()
+    const redis = new Redis('127.0.0.1:6379')
 
     app.use(cors())
 
@@ -52,9 +53,14 @@ const main = async () => {
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [UserResolver],
+            resolvers: [UserResolver, PostResolver],
             validate: false,
-        })
+        }),
+        context: ({ req, res }) => ({
+            req,
+            res,
+            redis,
+        }),
     })
 
     apolloServer.applyMiddleware({app})
@@ -62,9 +68,9 @@ const main = async () => {
     app.listen(4000, () => {
         console.log('server running')
     })
-    app.get('/', (_, res) => {
-        res.send('hello')
-    })
+
 }
 
-main()
+main().catch(error => {
+    console.log(error)
+})

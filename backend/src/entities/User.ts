@@ -34,7 +34,8 @@ export class User extends BaseEntity {
     @ManyToOne(()=> FriendShip, friendship => friendship.sender)
     friendList: FriendShip[]
 
-    @OneToMany(() => Post, (post) => post.creator)
+
+    @OneToMany(() => Post, (post) => post.creatorId)
     posts: Post[];
 
     @Field(() => String)
