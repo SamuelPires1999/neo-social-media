@@ -2,19 +2,19 @@ import { FriendShip } from "../entities/Friendship";
 import { isAuth } from "../Middlewares/isAuth";
 import {
   Arg,
+  Ctx,
   Field,
   InputType,
   Mutation,
   ObjectType,
+  //Query,
   Resolver,
   UseMiddleware,
 } from "type-graphql";
+import { MyContext } from "src/types";
 
 @InputType()
 class friendRequestInput {
-  @Field()
-  sender!: number;
-
   @Field()
   receiver!: number;
 
@@ -44,11 +44,12 @@ export class FriendshipResolver {
   @Mutation(() => friendResponse)
   @UseMiddleware(isAuth)
   async requestFriend(
-    @Arg("options") options: friendRequestInput
+    @Arg("options") options: friendRequestInput,
+    @Ctx() { req }: MyContext
   ): Promise<friendResponse> {
     try {
       const friendRequest = await FriendShip.create({
-        sender: options.sender,
+        sender: req.session.userId,
         receiver: options.receiver,
         status: false,
       }).save();
@@ -65,4 +66,12 @@ export class FriendshipResolver {
       };
     }
   }
+
+  //   @Query()
+  //   @UseMiddleware(isAuth)
+  //   async getRequests(
+  //       @Arg('')
+  //   ) {
+
+  //   }
 }
