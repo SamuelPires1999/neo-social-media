@@ -7,10 +7,8 @@ import {
     OneToMany,
     UpdateDateColumn,
     CreateDateColumn,
-    ManyToOne
 } from "typeorm";
 import {Post} from './Post'
-import {FriendShip} from "./Friendship";
 
 @ObjectType()
 @Entity()
@@ -30,10 +28,6 @@ export class User extends BaseEntity {
 
     @Column()
     password!: string;
-
-    @ManyToOne(()=> FriendShip, friendship => friendship.sender)
-    friendList: FriendShip[]
-
 
     @OneToMany(() => Post, (post) => post.creatorId)
     posts: Post[];

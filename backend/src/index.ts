@@ -10,9 +10,7 @@ import Redis from "ioredis";
 import session from "express-session";
 import cors from "cors";
 import connectRedis from "connect-redis";
-import { FriendShip } from "./entities/Friendship";
 import { PostResolver } from "./resolvers/PostResolver";
-import { FriendshipResolver } from "./resolvers/FriendshipResolver";
 
 const main = async () => {
   const conn = await createConnection({
@@ -21,7 +19,7 @@ const main = async () => {
     password: "12345",
     database: "postgres",
     logging: ["query", "error"],
-    entities: [Post, User, FriendShip],
+    entities: [Post, User],
     synchronize: true,
   });
 
@@ -56,7 +54,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, PostResolver, FriendshipResolver],
+      resolvers: [UserResolver, PostResolver ],
       validate: false,
     }),
     context: ({ req, res }) => ({
